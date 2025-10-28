@@ -3,6 +3,10 @@ name: Playwright Tests
 on:
   push:
   pull_request:
+permissions:
+  contents: read
+  actions: read
+  checks: write
 
 jobs:
   test:
