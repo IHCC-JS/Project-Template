@@ -1,0 +1,91 @@
+name: Playwright Tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Run Playwright tests (HTML + JSON reporters)
+        env:
+          PLAYWRIGHT_JSON_OUTPUT_NAME: test-results.json
+        run: npx playwright test --reporter=html,json
+
+      - name: Upload HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-html-report
+          path: playwright-report
+          if-no-files-found: warn
+
+      - name: Upload raw JSON results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-json-results
+          path: test-results.json
+          if-no-files-found: warn
+
+      - name: Summarize results and grade
+        if: always()
+        id: grade
+        shell: node
+        run: |
+          const fs = require('fs');
+          const path = 'test-results.json';
+          let passed = 0, failed = 0, skipped = 0, flaky = 0, total = 0;
+
+          if (fs.existsSync(path)) {
+            const data = JSON.parse(fs.readFileSync(path, 'utf8'));
+            const stats = data.stats || {};
+            passed = Number(stats.expected || 0);
+            failed = Number(stats.unexpected || 0);
+            flaky = Number(stats.flaky || 0);
+            skipped = Number(stats.skipped || 0);
+            total = passed + failed + flaky; // exclude skipped from denominator
+          }
+
+          const percent = total ? Math.round((passed / total) * 100) : 0;
+
+          const lines = [
+            '# Playwright Test Summary',
+            '',
+            `- Passed: ${passed}`,
+            `- Failed: ${failed}`,
+            `- Flaky: ${flaky}`,
+            `- Skipped: ${skipped}`,
+            `- Total (graded): ${total}`,
+            `- Score: ${percent}%`
+          ].join('\n');
+
+          fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, lines + '\n');
+
+          // Also expose as step outputs (optional for downstream jobs)
+          const outputs = [
+            `passed=${passed}`,
+            `failed=${failed}`,
+            `flaky=${flaky}`,
+            `skipped=${skipped}`,
+            `total=${total}`,
+            `score=${percent}`
+          ].join('\n');
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, outputs + '\n');
