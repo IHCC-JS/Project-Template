@@ -1,6 +1,7 @@
 {
   "name": "project-template",
   "version": "1.0.0",
+  "type": "module",
   "description": "This project is a template for creating new projects with Vite, Tailwind CSS, and Playwright.",
   "scripts": {
     "dev": "vite",

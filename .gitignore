@@ -24,3 +24,9 @@ Thumbs.db
 # Environment
 .env
 .env.local
+
+# Testing
+test-results
+playwright-report
+
+
