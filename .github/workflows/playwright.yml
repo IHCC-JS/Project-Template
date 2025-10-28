@@ -3,10 +3,6 @@ name: Playwright Tests
 on:
   push:
   pull_request:
-permissions:
-  contents: read
-  actions: read
-  checks: write
 
 jobs:
   test:
@@ -27,7 +23,7 @@ jobs:
         run: npm install
 
       - name: Install Playwright browsers and dependencies
-        run: npx playwright install --with-deps
+        run: npx playwright install
 
       - name: Run Playwright tests
         id: playwright-tests
