@@ -1,6 +1,5 @@
 name: Playwright Tests
 
-# probably can change this to only pull_request
 on:
   push:
   pull_request:
@@ -15,7 +14,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22 # how can I update this automatically?
+          node-version: 'lts/*'
 
       - name: Install dependencies
         run: npm install
@@ -23,20 +22,16 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install
 
-      - name: Run tests
-        # ensure CI=true so Playwright behaves for CI (retries, single worker, etc.)
-        run: npm test
+      - name: Run Playwright tests (with CTRF reporter)
+        run: npx playwright test --reporter=html,json --output=playwright-report
         env:
           CI: true
-
-      - name: Upload HTML report
-        uses: actions/upload-artifact@v4
+      - name: Publish Test Report
+        uses: ctrf-io/github-test-reporter@v1
+        if: always()
         with:
-          name: playwright-html-report
-          path: playwright-report/html
-
-      - name: Upload JUnit XML
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-junit-xml
-          path: playwright-report/results.xml
+          report-path: 'playwright-report/ctrf-report.json'
+          github-report: true
+          summary-report: true
+          annotate: true
+          pull-request: true
