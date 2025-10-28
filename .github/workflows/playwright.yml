@@ -22,10 +22,14 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install
 
-      - name: Run Playwright tests (with CTRF reporter)
+      - name: Run Playwright tests
         run: npx playwright test --reporter=html,json --output=playwright-report
         env:
           CI: true
+
+      - name: Convert/Ensure CTRF format
+        run: npx playwright-ctrf-json-reporter --input playwright-report/*.json --output playwright-report/ctrf-report.json
+
       - name: Publish Test Report
         uses: ctrf-io/github-test-reporter@v1
         if: always()
