@@ -6,7 +6,9 @@ on:
 
 jobs:
   test:
+    timeout-minutes: 10
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -17,25 +19,34 @@ jobs:
           node-version: 'lts/*'
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Install Playwright browsers
         run: npx playwright install
 
       - name: Run Playwright tests
-        run: npx playwright test --reporter=html,json --output=playwright-report
-        env:
-          CI: true
+        continue-on-error: true
+        id: playwright-tests
+        run: npm run test
 
-      - name: Convert/Ensure CTRF format
-        run: npx playwright-ctrf-json-reporter --input playwright-report/*.json --output playwright-report/ctrf-report.json
-
-      - name: Publish Test Report
-        uses: ctrf-io/github-test-reporter@v1
+      - name: Upload test results
         if: always()
+        uses: actions/upload-artifact@v4
         with:
-          report-path: 'playwright-report/ctrf-report.json'
-          github-report: true
-          summary-report: true
-          annotate: true
-          pull-request: true
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
+
+      - name: Publish Test Results
+        if: always()
+        uses: dorny/test-reporter@v1
+        with:
+          name: Playwright Test Results
+          path: playwright-report/results.xml
+          reporter: java-junit
+          fail-on-error: true
+
+      - name: Check test results
+        if: steps.playwright-tests.outcome == 'failure'
+        run: exit 1
+
