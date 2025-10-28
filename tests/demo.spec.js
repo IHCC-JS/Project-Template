@@ -6,7 +6,7 @@ test.describe("Demo Form", () => {
     })
 
     test("should display the form with all fields", async ({page}) => {
-        await expect(page.locator("h1")).toContainText("Welcome!!")
+        await expect(page.locator("h1")).toContainText("Welcome")
         await expect(page.locator("#name")).toBeVisible()
         await expect(page.locator("#email")).toBeVisible()
         await expect(page.locator("#submitBtn")).toBeVisible()

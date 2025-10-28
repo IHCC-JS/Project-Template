@@ -1,8 +1,8 @@
 # Project Template
 
 [//]: # (TODO Change Demo to Something more fun)
-[//]: # (TODO add Tailwind to DEMO)
-[//]: # (TODO fix Workflow [GitHUb Actions])
+[//]: # (TODO FIX Tailwind to DEMO)
+[//]: # (TODO add favicon [code logo])
 [//]: # (TODO finish README)
 
 This repository is a template for a TypeScript + Vite project.
