@@ -1,7 +1,6 @@
 # Project Template
 
 [//]: # (TODO Change Demo to Something more fun)
-[//]: # (TODO FIX Tailwind to DEMO)
 [//]: # (TODO add favicon [code logo])
 [//]: # (TODO finish README)
 

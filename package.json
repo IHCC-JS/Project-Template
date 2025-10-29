@@ -11,7 +11,8 @@
     "test:ui": "playwright test --ui",
     "test:debug": "playwright test --debug"
   },
-  "devDependencies": {
+  "dependencies": {
+    "@tailwindcss/vite": "^4.1.16",
     "@playwright/test": "^1.56.0",
     "@types/node": "24.9.2",
     "autoprefixer": "^10.4.21",
