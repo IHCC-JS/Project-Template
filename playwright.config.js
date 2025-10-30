@@ -17,14 +17,14 @@ export default defineConfig({
     },
 
     projects: [
-        // {
-        //     name: 'firefox',
-        //     use: {...devices['Desktop Firefox']},
-        // },
-        // {
-        //     name: 'firefox-mobile',
-        //     use: {...devices['Pixel 8']},
-        // },
+        {
+            name: 'firefox',
+            use: {...devices['Desktop Firefox']},
+        },
+        {
+            name: 'firefox-mobile',
+            use: {...devices['Pixel 8']},
+        },
         {
             name: "chromium",
             use: {...devices["Desktop Chrome"]},
